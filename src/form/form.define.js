@@ -2,6 +2,7 @@ import { TYPE_OBJECT, ROLE } from "../constants/object.constants"
 
 const AreaForm = {
     label: "Tạo vùng",
+    endpoint: 'objects',
     type: TYPE_OBJECT.AREA,
     name: {
         type: "input",
@@ -23,6 +24,7 @@ const AreaForm = {
 
 const RegionForm = {
     label: "Tạo khu vực",
+    endpoint: 'objects',
     type: TYPE_OBJECT.REGION,
     fetch: {
         tpar1: {
@@ -58,6 +60,7 @@ const RegionForm = {
 
 const BranchForm = {
     label: "Tạo chi nhánh",
+    endpoint: 'objects',
     type: TYPE_OBJECT.BRANCH,
     fetch: {
         tpar2: {
@@ -93,6 +96,7 @@ const BranchForm = {
 
 const BankerForm = {
     label: "Tạo banker",
+    endpoint: 'objects',
     type: TYPE_OBJECT.BANKER,
     fetch: {
         tpar1: {
@@ -120,6 +124,7 @@ const BankerForm = {
 
 const SaleForm = {
     label: "Tạo sale",
+    endpoint: 'objects',
     type: TYPE_OBJECT.SALE,
     fetch: {
         tpar2: {
@@ -156,16 +161,17 @@ const SaleForm = {
     },
     tpar2: {
         type: "select",
-        label: "SM id",
+        label: "SM",
         rules: {
             required: false,
-            message: "Vui lòng chọn SM id!",
+            message: "Vui lòng chọn SM!",
         }
     },
 }
 
 const CustomerForm = {
     label: "Tạo khách hàng",
+    endpoint: 'objects',
     type: TYPE_OBJECT.CUSTOMER,
     fetch: {
         tpar1: {

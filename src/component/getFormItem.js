@@ -6,7 +6,7 @@ const { TextArea } = Input;
 const getFormItem = (props) => {
     const selectItem = ({ data }) => {
         if (props.type === "inputNumber") {
-            return <InputNumber defaultValue={0} style={{ width: '100%' }}/>;
+            return <InputNumber style={{ width: '100%' }}/>;
         }
         
         if (props.type === "textArea") {

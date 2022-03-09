@@ -6,7 +6,7 @@ import queryString from "query-string";
 import { getFormVariables } from "./form.define";
 import { TYPE_OBJECT } from "../constants/object.constants";
 import getFormItem from "../component/getFormItem";
-import { getObject, updateObject } from "../services/object.service";
+import { getData, updateData } from "../services/data.service";
 import "./style.css";
 
 const AddObject = () => {
@@ -42,13 +42,13 @@ const AddObject = () => {
                 break;
         }
 
-        await updateObject({ ...values, type: currentType });
+        await updateData(formVariables.endpoint, { ...values, type: currentType });
         form.resetFields();
     };
 
     const fetchDataSelect = async (values) => {
         const response = await Promise.all(
-            Object.keys(values).map((val) => getObject(values[val]))
+            Object.keys(values).map((val) => getData(formVariables.endpoint, values[val]))
         );
         let data = {};
         Object.keys(values).forEach((val, index) => {
@@ -79,7 +79,7 @@ const AddObject = () => {
     };
 
     if (!Object.values(TYPE_OBJECT).includes(currentType)) {
-        return <Redirect to="/object?type=aiss.1.area" />;
+        return <Redirect to="/form?type=aiss.1.area" />;
     }
     return (
         <div className="container">

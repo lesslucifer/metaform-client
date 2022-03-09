@@ -18,7 +18,7 @@ function App() {
                 >
                     Learn React
                 </a>
-                <Link to="/object">Home</Link>
+                <Link to="/form">Forms</Link>
             </header>
         </div>
     );

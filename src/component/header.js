@@ -14,24 +14,24 @@ const Header = ({ children }) => {
                     title="Tạo mới Object"
                 >
                     <Menu.Item key="setting:1">
-                        <Link to="/object?type=aiss.1.area">Tạo Vùng</Link>
+                        <Link to="/form?type=aiss.1.area">Tạo Vùng</Link>
                     </Menu.Item>
                     <Menu.Item key="setting:2">
-                        <Link to="/object?type=aiss.1.region">Tạo Khu vực</Link>
+                        <Link to="/form?type=aiss.1.region">Tạo Khu vực</Link>
                     </Menu.Item>
                     <Menu.Item key="setting:3">
-                        <Link to="/object?type=aiss.1.branch">
+                        <Link to="/form?type=aiss.1.branch">
                             Tạo Chi nhánh
                         </Link>
                     </Menu.Item>
                     <Menu.Item key="setting:4">
-                        <Link to="/object?type=aiss.1.banker">Tạo Banker</Link>
+                        <Link to="/form?type=aiss.1.banker">Tạo Banker</Link>
                     </Menu.Item>
                     <Menu.Item key="setting:5">
-                        <Link to="/object?type=aiss.1.customer">Tạo Customer</Link>
+                        <Link to="/form?type=aiss.1.customer">Tạo Pipeline</Link>
                     </Menu.Item>
-                    <Menu.Item key="setting:5">
-                        <Link to="/object?type=aiss.1.sale">Tạo Sale</Link>
+                    <Menu.Item key="setting:6">
+                        <Link to="/form?type=aiss.1.sale">Tạo Sale</Link>
                     </Menu.Item>
                 </SubMenu>
             </Menu>
