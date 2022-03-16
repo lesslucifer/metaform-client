@@ -4,7 +4,7 @@ import { useLocation, Redirect } from "react-router-dom";
 import { useEffect, useState } from "react";
 import queryString from "query-string";
 import { getFormVariables } from "./form.define";
-import { TYPE_OBJECT } from "../constants/object.constants";
+import { TYPE_FORM } from "../constants/object.constants";
 import getFormItem from "../component/getFormItem";
 import { getData, updateData } from "../services/data.service";
 import "./style.css";
@@ -17,73 +17,88 @@ const AddObject = () => {
     const searchLocation = queryString.parse(location.search);
     const currentType = searchLocation?.type;
 
-    const formVariables = getFormVariables(currentType);
+    const formConfig = getFormVariables(currentType);
+    console.log(formConfig)
 
     const onFinish = async (values) => {
-        let currentTp;
-        switch (currentType) {
-            case TYPE_OBJECT.BRANCH:
-                currentTp = selectVal["tpar2"]?.find(
-                    (val) => val.code === values["tpar2"]
-                );
-                values = { ...values, tpar1: currentTp.tpar1 };
-                break;
-            case TYPE_OBJECT.BANKER:
-                currentTp = selectVal["tpar1"]?.find(
-                    (val) => val.code === values["tpar1"]
-                );
-                values = {
-                    ...values,
-                    tpar2: currentTp.tpar2,
-                    tpar3: currentTp.tpar1,
-                };
-                break;
-            default:
-                break;
+        const submits = [...(formConfig.submits ?? [])]
+        if (formConfig.submit) {
+            submits.push(formConfig.submit)
         }
 
-        await updateData(formVariables.endpoint, { ...values, type: currentType });
+        await Promise.all(submits.map(async submit => {
+            console.log(values)
+            const body = submit.body(values, {
+                config: formConfig,
+                type: currentType,
+                selects: selectVal
+            })
+            await updateData(submit.endpoint, { type: currentType, ...body });
+        }))
+
         form.resetFields();
     };
 
-    const fetchDataSelect = async (values) => {
-        const response = await Promise.all(
-            Object.keys(values).map((val) => getData(formVariables.endpoint, values[val]))
-        );
-        let data = {};
-        Object.keys(values).forEach((val, index) => {
-            data = { ...data, [val]: response[index] };
-        });
-
-        setSelectVal({ ...selectVal, ...data });
-    };
+    const reloadSelectData = async (field, config, params) => {
+        const data = await getData(config.endpoint, {
+            ...config.params,
+            ...( config.valueMapping && Object.keys(config.valueMapping).reduce((m, k) => {
+                m[k] = params[config.valueMapping[k]]
+                return m
+            }, {}))
+        })
+        setSelectVal(prev => ({ ... prev, [field]: data }))
+    }
 
     useEffect(() => {
         form.resetFields();
-        if (formVariables.fetch && Object.keys(formVariables.fetch) !== 0) {
-            fetchDataSelect(formVariables.fetch);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [formVariables.fetch]);
+        formConfig.fields.forEach(field => {
+            if (field.data) {
+                setSelectVal(prev => ({ ... prev, [field.field]: field.data }))
+            }
+            if (field.fetch?.on === '$useEffect') {
+                reloadSelectData(field.field, field.fetch, null)
+            }
+        })
+    }, [formConfig]);
 
     const initialValues = {
-        type: TYPE_OBJECT.AREA,
+        type: TYPE_FORM.AREA,
         name: "",
         code: "",
+        tspar: moment(),
         tspar1: moment(),
+        tspar2: moment(),
+        tspar3: moment(),
         tpar1: "",
         tpar2: "",
+        tpar3: "",
+        tpar4: "",
+        tpar5: "",
+        tpar6: "",
+        tpar7: "",
+        tpar8: "",
+        tpar9: "",
+        ltpar1: "",
+        ltpar2: "",
+        ltpar3: "",
         ipar1: 0,
         ipar2: 0,
         ipar3: 0,
+        ipar4: 0,
+        ipar5: 0,
+        bipar: 0,
+        bipar1: 0,
+        bipar2: 0,
     };
 
-    if (!Object.values(TYPE_OBJECT).includes(currentType)) {
+    if (!formConfig) {
         return <Redirect to="/form?type=aiss.1.area" />;
     }
+
     return (
         <div className="container">
-            <Card title={formVariables && formVariables.label}>
+            <Card title={formConfig && formConfig.label}>
                 <Form
                     form={form}
                     name="basic"
@@ -93,21 +108,27 @@ const AddObject = () => {
                     initialValues={initialValues}
                     onFinish={onFinish}
                 >
-                    {formVariables &&
-                        Object.keys(formVariables).map((value, index) => {
-                            if (!formVariables[value].type) return null;
-                            const { label, type, rules, defaultData } =
-                                formVariables[value];
+                    {formConfig &&
+                        formConfig.fields.map((field, index) => {
+                            if (!field.type) return null;
+                            const { label, type, rules } = field;
 
                             const props = {
                                 label,
-                                name: value,
+                                name: field.field,
                                 type,
                                 rules,
                                 key: index,
-                                data: defaultData
-                                    ? defaultData
-                                    : selectVal[value],
+                                onChange: async (value) => {
+                                    formConfig.fields.forEach(fd => {
+                                        if (fd.fetch?.on === field.field) {
+                                            reloadSelectData(fd.field, fd.fetch, {
+                                                [field.field]: value
+                                            })
+                                        }
+                                    })
+                                },
+                                data: selectVal[field.field],
                             };
                             return getFormItem(props);
                         })}

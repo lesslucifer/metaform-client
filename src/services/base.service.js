@@ -1,7 +1,8 @@
 import { message } from "antd";
 import axios from "axios";
 
-const BASE_URL = "https://api.ze-connect.com/esform/lake";
+// const BASE_URL = "https://api.ze-connect.com/esform/lake";
+const BASE_URL = "http://localhost:3447/lake";
 
 export const request = (
     method,
@@ -17,7 +18,7 @@ export const request = (
             "Content-Type": "application/json",
         },
     };
-
+    
     return axios({
         baseURL: options.baseURL,
         headers: options.headers,
