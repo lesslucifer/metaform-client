@@ -3,7 +3,7 @@ import * as _ from 'lodash'
 import * as moment from 'moment'
 
 const valueFields = (...fields) => values => _.pick(values, ...fields)
-const getTime = (values, field) => _.get(values, field)?.valueOf() || Date.now()
+const getTime = (values, field) => (_.get(values, field) || moment()).format('YYYY-MM-DD HH:mm:ss')
 
 const AreaForm = {
     label: "Tạo vùng",
@@ -351,7 +351,7 @@ const ReferForm = {
                 tpar5: meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.tpar2,
                 tpar6: meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.tpar3,
                 ipar3: meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.tpar4,
-                tspar: getTime(values, 'tspar')
+                tspar1: getTime(values, 'tspar1')
             })
         }
     ]
@@ -473,7 +473,7 @@ const SubForm = {
                 tpar5: meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.tpar2,
                 tpar6: meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.tpar3,
                 ipar3: meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.tpar4,
-                tspar: getTime(values, 'tspar')
+                tspar1: getTime(values, 'tspar1')
             })
         }
     ]
@@ -568,7 +568,7 @@ const IssueStatusForm = {
                 tpar6: meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.tpar3,
                 ipar2: meta.selects?.code?.find?.(opt => opt.id === values.code)?.ipar3,
                 ipar3: meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.tpar4,
-                tspar: getTime(values, 'tspar1')
+                tspar1: getTime(values, 'tspar1')
             })
         }
     ]
