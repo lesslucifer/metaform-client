@@ -128,7 +128,7 @@ const BranchForm = {
         endpoint: 'objects',
         body: (values, meta) => ({
             ..._.pick(values, 'name', 'code', 'tpar2'),
-            tpar1: meta.selects?.tpar2?.find?.(opt => opt.code === values.tpar2)?.tpar1
+            tpar1: meta.selects?.tpar2?.find?.(opt => opt.id === values.tpar2)?.tpar1
         })
     }
 }
@@ -174,19 +174,23 @@ const BankerForm = {
                 message: "Vui lòng chọn mã phân khúc!",
             },
             data: [
-                {id: 1, name: 'BP'},
-                {id: 2, name: 'CS'},
-                {id: 3, name: 'RM'},
+                { id: 1, name: 'BP' },
+                { id: 2, name: 'CS' },
+                { id: 3, name: 'RM' },
             ]
         },
     ],
     submit: {
         endpoint: 'objects',
-        body: (values, meta) => ({
-            ..._.pick(values, 'name', 'tpar3', 'ipar1'),
-            tpar1: meta.selects?.tpar3?.find?.(opt => opt.code === values.tpar3)?.tpar1,
-            tpar2: meta.selects?.tpar3?.find?.(opt => opt.code === values.tpar3)?.tpar2
-        })
+        body: (values, meta) => {
+            console.log(meta.selects)
+            console.log(meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.tpar1)
+            return {
+                ..._.pick(values, 'name', 'tpar3', 'ipar1'),
+                tpar1: meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.tpar1,
+                tpar2: meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.tpar2
+            }
+        }
     }
 }
 
@@ -433,7 +437,7 @@ const SubForm = {
         {
             field: 'ipar1',
             type: "select",
-            data: [{id: 0, name: 'Pending'}, {id: -1, name: 'Phát hành'}],
+            data: [{ id: 0, name: 'Pending' }, { id: -1, name: 'Phát hành' }],
             label: "Tình trạng",
             rules: {
                 required: true,
