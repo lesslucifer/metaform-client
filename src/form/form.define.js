@@ -3,7 +3,7 @@ import * as _ from 'lodash'
 import * as moment from 'moment'
 
 const valueFields = (...fields) => values => _.pick(values, ...fields)
-const getTime = (values, field) => (_.get(values, field) || moment()).format('YYYY-MM-DD HH:mm:ss')
+const getTime = (values, field) => (_.get(values, field) || moment()).utc().format('YYYY-MM-DD HH:mm:ss')
 
 const AreaForm = {
     label: "Tạo vùng",
