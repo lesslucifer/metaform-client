@@ -18,7 +18,6 @@ const AddObject = () => {
     const currentType = searchLocation?.type;
 
     const formConfig = getFormVariables(currentType);
-    console.log(formConfig)
 
     const onFinish = async (values) => {
         const submits = [...(formConfig.submits ?? [])]
@@ -40,21 +39,48 @@ const AddObject = () => {
     };
 
     const reloadSelectData = async (field, config, params) => {
+        if (!config) return
         const data = await getData(config.endpoint, {
             ...config.params,
-            ...( config.valueMapping && Object.keys(config.valueMapping).reduce((m, k) => {
+            ...(config.valueMapping && Object.keys(config.valueMapping).reduce((m, k) => {
                 m[k] = params[config.valueMapping[k]]
                 return m
             }, {}))
         })
-        setSelectVal(prev => ({ ... prev, [field]: data }))
+        setSelectVal(prev => ({ ...prev, [field]: data }))
+        if (!data.hasOwnProperty(form.getFieldValue(field))) {
+            clearSelectField(field)
+        }
+        return data
+    }
+
+    const onFieldChanged = (field) => async (value) => {
+        formConfig.fields.forEach(fd => {
+            if (fd.fetch?.on === field) {
+                reloadSelectData(fd.field, fd.fetch, {
+                    [field]: value
+                })
+            }
+        })
+    }
+
+    const clearSelectField = (field) => {
+        form.setFieldsValue({
+            [field]: null
+        })
+        formConfig.fields.forEach(fd => {
+            if (fd.fetch?.on === field) {
+                setSelectVal(prev => ({ ...prev, [fd.field]: [] }))
+                clearSelectField(fd.field)
+            }
+        })
     }
 
     useEffect(() => {
         form.resetFields();
         formConfig.fields.forEach(field => {
             if (field.data) {
-                setSelectVal(prev => ({ ... prev, [field.field]: field.data }))
+                setSelectVal(prev => ({ ...prev, [field.field]: field.data }))
             }
             if (field.fetch?.on === '$useEffect') {
                 reloadSelectData(field.field, field.fetch, null)
@@ -119,15 +145,7 @@ const AddObject = () => {
                                 type,
                                 rules,
                                 key: index,
-                                onChange: async (value) => {
-                                    formConfig.fields.forEach(fd => {
-                                        if (fd.fetch?.on === field.field) {
-                                            reloadSelectData(fd.field, fd.fetch, {
-                                                [field.field]: value
-                                            })
-                                        }
-                                    })
-                                },
+                                onChange: onFieldChanged(field.field),
                                 data: selectVal[field.field],
                             };
                             return getFormItem(props);

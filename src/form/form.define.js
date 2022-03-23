@@ -182,15 +182,11 @@ const BankerForm = {
     ],
     submit: {
         endpoint: 'objects',
-        body: (values, meta) => {
-            console.log(meta.selects)
-            console.log(meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.tpar1)
-            return {
-                ..._.pick(values, 'name', 'tpar3', 'ipar1'),
-                tpar1: meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.tpar1,
-                tpar2: meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.tpar2
-            }
-        }
+        body: (values, meta) => ({
+            ..._.pick(values, 'name', 'tpar3', 'ipar1'),
+            tpar1: meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.tpar1,
+            tpar2: meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.tpar2
+        })
     }
 }
 
@@ -276,6 +272,23 @@ const ReferForm = {
             }
         },
         {
+            field: 'tpar4',
+            type: "select",
+            label: "Vùng",
+            rules: {
+                required: true,
+                message: "Vui lòng chọn Vùng!",
+            },
+            fetch: {
+                on: '$useEffect',
+                endpoint: 'objects',
+                params: {
+                    $fields: "*",
+                    type: TYPE_FORM.REGION,
+                }
+            }
+        },
+        {
             field: 'tpar3',
             type: "select",
             label: "Banker",
@@ -284,11 +297,14 @@ const ReferForm = {
                 message: "Vui lòng chọn Banker!",
             },
             fetch: {
-                on: '$useEffect',
+                on: 'tpar4',
                 endpoint: 'objects',
                 params: {
                     $fields: "*",
                     type: TYPE_FORM.BANKER,
+                },
+                valueMapping: {
+                    tpar2: 'tpar4'
                 }
             }
         },
@@ -345,9 +361,8 @@ const ReferForm = {
         {
             endpoint: 'data',
             body: (values, meta) => ({
-                ..._.pick(values, 'name', 'tpar1', 'tpar3', 'tpar7', 'ipar1', 'ipar2'),
+                ..._.pick(values, 'name', 'tpar1', 'tpar3', 'tpar4', 'tpar7', 'ipar1', 'ipar2'),
                 tpar2: meta.selects?.tpar1?.find?.(opt => opt.id === values.tpar1)?.tpar2,
-                tpar4: meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.tpar1,
                 tpar5: meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.tpar2,
                 tpar6: meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.tpar3,
                 ipar3: meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.tpar4,
@@ -389,6 +404,23 @@ const SubForm = {
             }
         },
         {
+            field: 'tpar4',
+            type: "select",
+            label: "Vùng",
+            rules: {
+                required: true,
+                message: "Vui lòng chọn Vùng!",
+            },
+            fetch: {
+                on: '$useEffect',
+                endpoint: 'objects',
+                params: {
+                    $fields: "*",
+                    type: TYPE_FORM.REGION,
+                }
+            }
+        },
+        {
             field: 'tpar3',
             type: "select",
             label: "Banker",
@@ -397,11 +429,14 @@ const SubForm = {
                 message: "Vui lòng chọn Banker!",
             },
             fetch: {
-                on: '$useEffect',
+                on: 'tpar4',
                 endpoint: 'objects',
                 params: {
                     $fields: "*",
                     type: TYPE_FORM.BANKER,
+                },
+                valueMapping: {
+                    tpar2: 'tpar4'
                 }
             }
         },
@@ -467,9 +502,8 @@ const SubForm = {
         {
             endpoint: 'data',
             body: (values, meta) => ({
-                ..._.pick(values, 'name', 'code', 'tpar1', 'tpar3', 'tpar7', 'ipar1', 'ipar2'),
+                ..._.pick(values, 'name', 'code', 'tpar1', 'tpar3', 'tpar4', 'tpar7', 'ipar1', 'ipar2'),
                 tpar2: meta.selects?.tpar1?.find?.(opt => opt.id === values.tpar1)?.tpar2,
-                tpar4: meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.tpar1,
                 tpar5: meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.tpar2,
                 tpar6: meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.tpar3,
                 ipar3: meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.tpar4,
@@ -511,6 +545,23 @@ const IssueStatusForm = {
             }
         },
         {
+            field: 'tpar4',
+            type: "select",
+            label: "Vùng",
+            rules: {
+                required: true,
+                message: "Vui lòng chọn Vùng!",
+            },
+            fetch: {
+                on: '$useEffect',
+                endpoint: 'objects',
+                params: {
+                    $fields: "*",
+                    type: TYPE_FORM.REGION,
+                }
+            }
+        },
+        {
             field: 'tpar3',
             type: "select",
             label: "Banker",
@@ -519,11 +570,14 @@ const IssueStatusForm = {
                 message: "Vui lòng chọn Banker!",
             },
             fetch: {
-                on: '$useEffect',
+                on: 'tpar4',
                 endpoint: 'objects',
                 params: {
                     $fields: "*",
                     type: TYPE_FORM.BANKER,
+                },
+                valueMapping: {
+                    tpar2: 'tpar4'
                 }
             }
         },
@@ -561,9 +615,8 @@ const IssueStatusForm = {
         {
             endpoint: 'data',
             body: (values, meta) => ({
-                ..._.pick(values, 'name', 'code', 'tpar1', 'tpar3', 'ipar2'),
+                ..._.pick(values, 'name', 'code', 'tpar1', 'tpar4', 'tpar3', 'ipar2'),
                 tpar2: meta.selects?.tpar1?.find?.(opt => opt.id === values.tpar1)?.tpar2,
-                tpar4: meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.tpar1,
                 tpar5: meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.tpar2,
                 tpar6: meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.tpar3,
                 ipar2: meta.selects?.code?.find?.(opt => opt.id === values.code)?.ipar3,
