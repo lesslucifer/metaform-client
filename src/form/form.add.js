@@ -20,6 +20,8 @@ const AddObject = () => {
     const formConfig = getFormVariables(currentType);
 
     const onFinish = async (values) => {
+        if (!formConfig) return
+        
         const submits = [...(formConfig.submits ?? [])]
         if (formConfig.submit) {
             submits.push(formConfig.submit)
@@ -55,6 +57,7 @@ const AddObject = () => {
     }
 
     const onFieldChanged = (field) => async (value) => {
+        if (!formConfig) return
         formConfig.fields.forEach(fd => {
             if (fd.fetch?.on === field) {
                 reloadSelectData(fd.field, fd.fetch, {
@@ -65,6 +68,7 @@ const AddObject = () => {
     }
 
     const clearSelectField = (field) => {
+        if (!formConfig) return
         form.setFieldsValue({
             [field]: null
         })
@@ -77,6 +81,8 @@ const AddObject = () => {
     }
 
     useEffect(() => {
+        if (!formConfig) return;
+
         form.resetFields();
         formConfig.fields.forEach(field => {
             if (field.data) {
@@ -119,7 +125,7 @@ const AddObject = () => {
     };
 
     if (!formConfig) {
-        return <Redirect to="/form?type=aiss.1.area" />;
+        return <Redirect to="/form?type=aiss.1.refer" />;
     }
 
     return (
