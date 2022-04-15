@@ -9,14 +9,11 @@ import getFormItem from "../component/getFormItem";
 import { getData, updateData } from "../services/data.service";
 import "./style.css";
 
-const AddObject = () => {
+const AddObject = (props) => {
     const [selectVal, setSelectVal] = useState({});
     const [form] = Form.useForm();
 
-    let location = useLocation();
-    const searchLocation = queryString.parse(location.search);
-    const currentType = searchLocation?.type;
-
+    const currentType = props.type
     const formConfig = getFormVariables(currentType);
 
     const onFinish = async (values) => {
@@ -107,7 +104,7 @@ const AddObject = () => {
                 reloadSelectData(field.field, field.fetch, null)
             }
         })
-    }, [formConfig]);
+    }, [formConfig, form]);
 
     const initialValues = {
         type: TYPE_FORM.AREA,
@@ -140,7 +137,7 @@ const AddObject = () => {
     };
 
     if (!formConfig) {
-        return <Redirect to="/form?type=aiss.1.refer" />;
+        return <Redirect to="/form/area" />;
     }
 
     return (

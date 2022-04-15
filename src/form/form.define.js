@@ -302,14 +302,14 @@ const ReferForm = {
                 message: "Vui lòng chọn Banker!",
             },
             fetch: {
-                on: 'tpar4',
+                on: 'tpar6',
                 endpoint: 'objects',
                 params: {
                     $fields: "*",
                     type: TYPE_FORM.BANKER,
                 },
                 valueMapping: {
-                    tpar3: 'tpar4'
+                    tpar3: 'tpar6'
                 }
             }
         },
@@ -323,9 +323,26 @@ const ReferForm = {
             }
         },
         {
+            field: 'tpar8',
+            type: "input",
+            label: "SĐT khách hàng",
+            rules: {
+                required: false
+            }
+        },
+        {
+            field: 'tpar9',
+            type: "input",
+            label: "Email khách hàng",
+            rules: {
+                required: false,
+                type: "email"
+            }
+        },
+        {
             field: 'tpar7',
             type: "textArea",
-            label: "Ghi chú",
+            label: "Tình trạng KH",
             rules: {
                 required: false,
             }
@@ -343,9 +360,9 @@ const ReferForm = {
         {
             field: 'ipar3',
             type: "inputNumber",
-            label: "FYP",
+            label: "FYP Dự kiến",
             rules: {
-                required: false,
+                required: true,
             }
         },
     ],
@@ -366,10 +383,11 @@ const ReferForm = {
         {
             endpoint: 'data',
             body: (values, meta) => ({
-                ..._.pick(values, 'name', 'tpar1', 'tpar3', 'tpar4', 'tpar7', 'ipar1', 'ipar2'),
+                ..._.pick(values, 'name', 'tpar1', 'tpar3', 'tpar7', 'tpar8', 'tpar9', 'ipar1', 'ipar2'),
                 tpar2: meta.selects?.tpar1?.find?.(opt => opt.id === values.tpar1)?.tpar2,
                 tpar4: meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.tpar1,
                 tpar5: meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.tpar2,
+                tpar6: meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.tpar3,
                 ipar3: meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.ipar1,
                 tspar1: getTime(values, 'tspar1')
             })
@@ -380,7 +398,7 @@ const ReferForm = {
 const SubForm = {
     label: "Sub",
     endpoint: 'data',
-    type: TYPE_FORM.REFER,
+    type: TYPE_FORM.SUB,
     fields: [
         {
             field: 'tspar1',
@@ -405,23 +423,24 @@ const SubForm = {
                 params: {
                     $fields: "*",
                     type: TYPE_FORM.SALE,
-                }
+                },
+                postProcess: (data) => data.forEach(d => d.name = `${d.name} (${d.code})`)
             }
         },
         {
-            field: 'tpar4',
+            field: 'tpar6',
             type: "select",
-            label: "Vùng",
+            label: "Chi nhánh",
             rules: {
                 required: true,
-                message: "Vui lòng chọn Vùng!",
+                message: "Vui lòng chọn chi nhánh!",
             },
             fetch: {
                 on: '$useEffect',
                 endpoint: 'objects',
                 params: {
                     $fields: "*",
-                    type: TYPE_FORM.REGION,
+                    type: TYPE_FORM.BRANCH,
                 }
             }
         },
@@ -434,14 +453,14 @@ const SubForm = {
                 message: "Vui lòng chọn Banker!",
             },
             fetch: {
-                on: 'tpar4',
+                on: 'tpar6',
                 endpoint: 'objects',
                 params: {
                     $fields: "*",
                     type: TYPE_FORM.BANKER,
                 },
                 valueMapping: {
-                    tpar2: 'tpar4'
+                    tpar3: 'tpar6'
                 }
             }
         },
@@ -469,7 +488,7 @@ const SubForm = {
         {
             field: 'tpar7',
             type: "textArea",
-            label: "Ghi chú",
+            label: "Tình trạng KH",
             rules: {
                 required: false,
             }
@@ -507,11 +526,12 @@ const SubForm = {
         {
             endpoint: 'data',
             body: (values, meta) => ({
-                ..._.pick(values, 'name', 'code', 'tpar1', 'tpar3', 'tpar4', 'tpar7', 'ipar1', 'ipar2'),
+                ..._.pick(values, 'name', 'code', 'tpar1', 'tpar3', 'tpar7', 'ipar1', 'ipar2'),
                 tpar2: meta.selects?.tpar1?.find?.(opt => opt.id === values.tpar1)?.tpar2,
+                tpar4: meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.tpar1,
                 tpar5: meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.tpar2,
                 tpar6: meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.tpar3,
-                ipar3: meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.tpar4,
+                ipar3: meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.ipar1,
                 tspar1: getTime(values, 'tspar1')
             })
         }
@@ -547,22 +567,23 @@ const IssueStatusForm = {
                     $fields: "*",
                     type: TYPE_FORM.SALE,
                 }
-            }
+            },
+            postProcess: (data) => data.forEach(d => d.name = `${d.name} (${d.code})`)
         },
         {
-            field: 'tpar4',
+            field: 'tpar6',
             type: "select",
-            label: "Vùng",
+            label: "Chi nhánh",
             rules: {
                 required: true,
-                message: "Vui lòng chọn Vùng!",
+                message: "Vui lòng chọn chi nhánh!",
             },
             fetch: {
                 on: '$useEffect',
                 endpoint: 'objects',
                 params: {
                     $fields: "*",
-                    type: TYPE_FORM.REGION,
+                    type: TYPE_FORM.BRANCH,
                 }
             }
         },
@@ -575,14 +596,14 @@ const IssueStatusForm = {
                 message: "Vui lòng chọn Banker!",
             },
             fetch: {
-                on: 'tpar4',
+                on: 'tpar6',
                 endpoint: 'objects',
                 params: {
                     $fields: "*",
                     type: TYPE_FORM.BANKER,
                 },
                 valueMapping: {
-                    tpar2: 'tpar4'
+                    tpar3: 'tpar6'
                 }
             }
         },
@@ -620,12 +641,13 @@ const IssueStatusForm = {
         {
             endpoint: 'data',
             body: (values, meta) => ({
-                ..._.pick(values, 'name', 'code', 'tpar1', 'tpar4', 'tpar3', 'ipar2'),
+                ..._.pick(values, 'name', 'code', 'tpar1', 'tpar3', 'tpar3', 'ipar2'),
                 tpar2: meta.selects?.tpar1?.find?.(opt => opt.id === values.tpar1)?.tpar2,
+                tpar4: meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.tpar1,
                 tpar5: meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.tpar2,
                 tpar6: meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.tpar3,
                 ipar2: meta.selects?.code?.find?.(opt => opt.id === values.code)?.ipar3,
-                ipar3: meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.tpar4,
+                ipar3: meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.ipar1,
                 tspar1: getTime(values, 'tspar1')
             })
         }
