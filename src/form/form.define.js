@@ -174,9 +174,9 @@ const BankerForm = {
                 message: "Vui lòng chọn mã phân khúc!",
             },
             data: [
-                { id: 1, name: 'BP' },
-                { id: 2, name: 'CS' },
-                { id: 3, name: 'RM' },
+                { id: 1, name: 'PB - Chuyên viên tín dụng' },
+                { id: 2, name: 'CS - Dịch vụ khách hàng' },
+                { id: 3, name: 'RM - Chuyên viên KH ưu tiên' },
             ]
         },
     ],
@@ -243,6 +243,10 @@ const SaleForm = {
             }
         }
     ],
+    validate: (values) => {
+        if (values.tpar1 == 1 && !values.tpar2) throw new Error('Phải chọn SM cho IS / EIS')
+        if (values.tpar1 == 2 && values.tpar2) throw new Error('Không thể chọn SM cho SM')
+    },
     submit: {
         endpoint: 'objects',
         body: valueFields('name', 'code', 'tpar1', 'tpar2')
@@ -268,23 +272,24 @@ const ReferForm = {
                 params: {
                     $fields: "*",
                     type: TYPE_FORM.SALE,
-                }
+                },
+                postProcess: (data) => data.forEach(d => d.name = `${d.name} (${d.code})`)
             }
         },
         {
-            field: 'tpar4',
+            field: 'tpar6',
             type: "select",
-            label: "Vùng",
+            label: "Chi nhánh",
             rules: {
                 required: true,
-                message: "Vui lòng chọn Vùng!",
+                message: "Vui lòng chọn chi nhánh!",
             },
             fetch: {
                 on: '$useEffect',
                 endpoint: 'objects',
                 params: {
                     $fields: "*",
-                    type: TYPE_FORM.REGION,
+                    type: TYPE_FORM.BRANCH,
                 }
             }
         },
@@ -304,7 +309,7 @@ const ReferForm = {
                     type: TYPE_FORM.BANKER,
                 },
                 valueMapping: {
-                    tpar2: 'tpar4'
+                    tpar3: 'tpar4'
                 }
             }
         },
@@ -363,9 +368,9 @@ const ReferForm = {
             body: (values, meta) => ({
                 ..._.pick(values, 'name', 'tpar1', 'tpar3', 'tpar4', 'tpar7', 'ipar1', 'ipar2'),
                 tpar2: meta.selects?.tpar1?.find?.(opt => opt.id === values.tpar1)?.tpar2,
+                tpar4: meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.tpar1,
                 tpar5: meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.tpar2,
-                tpar6: meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.tpar3,
-                ipar3: meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.tpar4,
+                ipar3: meta.selects?.tpar3?.find?.(opt => opt.id === values.tpar3)?.ipar1,
                 tspar1: getTime(values, 'tspar1')
             })
         }
@@ -624,7 +629,8 @@ const IssueStatusForm = {
                 tspar1: getTime(values, 'tspar1')
             })
         }
-    ]
+    ],
+    submitButton: "Cập nhật"
 }
 
 const mapTypeToForm = {

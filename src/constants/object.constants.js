@@ -17,6 +17,6 @@ export const ROLE = [
     },
     {
         code: "SALE",
-        name: "SALE",
+        name: "IS / EIS",
     },
 ];

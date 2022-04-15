@@ -1,4 +1,4 @@
-import { Card, Form, Button } from "antd";
+import { Card, Form, Button, notification } from "antd";
 import * as moment from "moment";
 import { useLocation, Redirect } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -20,24 +20,36 @@ const AddObject = () => {
     const formConfig = getFormVariables(currentType);
 
     const onFinish = async (values) => {
-        if (!formConfig) return
-        
-        const submits = [...(formConfig.submits ?? [])]
-        if (formConfig.submit) {
-            submits.push(formConfig.submit)
-        }
-
-        await Promise.all(submits.map(async submit => {
-            console.log(values)
-            const body = submit.body(values, {
+        try {
+            if (!formConfig) return
+            const opts = {
                 config: formConfig,
                 type: currentType,
                 selects: selectVal
+            }
+    
+            if (formConfig.validate) {
+                await Promise.resolve(formConfig.validate(values, opts))
+            }
+            
+            const submits = [...(formConfig.submits ?? [])]
+            if (formConfig.submit) {
+                submits.push(formConfig.submit)
+            }
+    
+            await Promise.all(submits.map(async submit => {
+                let body = await Promise.resolve(submit.body(values, opts))
+                body = Object.fromEntries(Object.entries(body).filter(([_, v]) => v !== null));
+                await updateData(submit.endpoint, { type: currentType, ...body });
+            }))
+    
+            form.resetFields();
+        }
+        catch (err) {
+            notification.error({
+                message: err.message ?? 'Đã có lỗi xảy ra. Xin vui lòng thử lại'
             })
-            await updateData(submit.endpoint, { type: currentType, ...body });
-        }))
-
-        form.resetFields();
+        }
     };
 
     const reloadSelectData = async (field, config, params) => {
@@ -49,6 +61,9 @@ const AddObject = () => {
                 return m
             }, {}))
         })
+        if (config.postProcess) {
+            config.postProcess(data)
+        }
         setSelectVal(prev => ({ ...prev, [field]: data }))
         if (!data.hasOwnProperty(form.getFieldValue(field))) {
             clearSelectField(field)
@@ -158,7 +173,7 @@ const AddObject = () => {
                         })}
                     <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
                         <Button type="primary" htmlType="submit">
-                            Tạo mới
+                            {formConfig.submitButton ?? "Tạo mới"}
                         </Button>
                     </Form.Item>
                 </Form>
