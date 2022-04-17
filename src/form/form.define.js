@@ -1,4 +1,4 @@
-import { TYPE_FORM, ROLE } from "../constants/object.constants"
+import { TYPE_FORM, ROLE, CUSTOMER_GROUP } from "../constants/object.constants"
 import * as _ from 'lodash'
 import * as moment from 'moment'
 
@@ -191,17 +191,17 @@ const BankerForm = {
 }
 
 const SaleForm = {
-    label: "Tạo sale",
+    label: "Tạo SM - IOIS",
     endpoint: 'objects',
     type: TYPE_FORM.SALE,
     fields: [
         {
             field: 'name',
             type: "input",
-            label: "Tên sale",
+            label: "Họ tên",
             rules: {
                 required: true,
-                message: "Vui lòng nhập tên sale!",
+                message: "Vui lòng nhập họ tên!",
             }
         },
         {
@@ -244,7 +244,7 @@ const SaleForm = {
         }
     ],
     validate: (values) => {
-        if (values.tpar1 == 1 && !values.tpar2) throw new Error('Phải chọn SM cho IS / EIS')
+        if (values.tpar1 == 1 && !values.tpar2) throw new Error('Phải chọn SM cho IOIS')
         if (values.tpar1 == 2 && values.tpar2) throw new Error('Không thể chọn SM cho SM')
     },
     submit: {
@@ -259,9 +259,18 @@ const ReferForm = {
     type: TYPE_FORM.REFER,
     fields: [
         {
+            field: 'tspar1',
+            type: "date",
+            label: "Ngày báo cáo",
+            rules: {
+                required: true,
+                message: "Chọn ngày báo cáo!",
+            }
+        },
+        {
             field: 'tpar1',
             type: "select",
-            label: "Sale",
+            label: "IOIS",
             rules: {
                 required: true,
                 message: "Chọn tài khoản!",
@@ -351,7 +360,7 @@ const ReferForm = {
             field: 'ipar1',
             type: "select",
             label: "Nhóm",
-            data: [{ id: 1, name: 'Nhóm 1' }, { id: 2, name: 'Nhóm 2' }, { id: 3, name: 'Nhóm 3' }, { id: 4, name: 'Nhóm 4' }, { id: 5, name: 'Nhóm 5' }],
+            data: CUSTOMER_GROUP,
             rules: {
                 required: true,
                 message: "Vui lòng chọn nhóm refer",
@@ -412,7 +421,7 @@ const SubForm = {
         {
             field: 'tpar1',
             type: "select",
-            label: "Sale",
+            label: "IOIS",
             rules: {
                 required: true,
                 message: "Chọn tài khoản!",
@@ -555,7 +564,7 @@ const IssueStatusForm = {
         {
             field: 'tpar1',
             type: "select",
-            label: "Sale",
+            label: "IOIS",
             rules: {
                 required: true,
                 message: "Chọn tài khoản!",
